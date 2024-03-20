@@ -264,7 +264,7 @@ $baseUrl = ProjectConfig::$baseurl;
                 let publisher_edit = $('#editmodal .modal-content #publisher').val()
                 let book_id = $('#editmodal .modal-content #bookid').val()
 
-                if(title_edit == "" && isbn_edit == "" && author_edit == "" && publisher_edit == "" && category_edit == "-100"){
+                if(title_edit == "" || isbn_edit == "" || author_edit == "" || publisher_edit == "" || category_edit == "-100"){
                   $('#editerror').modal('show')
                   $('#editmodal').modal('hide')
                   $('#editerrmessage').text("Please fill-up everything.")
