@@ -18,39 +18,20 @@ class Database{
         $this->user = $user;
         $this->pass = $pass;
 
-        $this->__construct1();
-    }
-
-    public function __construct1()
-    {
-        // Set DSN  
-        //$dsn = "mysql:host=" . $this->host . ";port=" . $this->port . ";dbname=" . $this->dbname . ";charset=UTF8";
-        $dsn = "mysql:host=" . $this->host . ";port=" . $this->port . ";dbname=" . $this->dbname;
-
-        $options = array(
-            PDO::ATTR_PERSISTENT => true,
-            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
-        );
-
         // Create a new PDO instanace  
-        try
-        {
-            $this->dbh = new PDO($dsn, $this->user, $this->pass, $options);
+        try{
+            $this->dbh = new PDO("mysql:host=" . $this->host . ";port=" . $this->port . ";dbname=" . $this->dbname, $this->user, $this->pass);
         }
         
         // Catch any errors  
-        catch (PDOException $e)
-        {
+        catch (PDOException $e){
             $this->error = $e->getMessage();
         }
     }
 
     public function query($query)
     {
-      // return $this->dbh->prepare($query);
-      // Store the PDOStatement object in $this->stmt
       $this->stmt = $this->dbh->prepare($query);
-      // return $this->stmt;
     }
 
     public function bind($param, $value, $type = null)
@@ -91,24 +72,23 @@ class Database{
         return $this->stmt->rowCount();
     }
 
-    public function lastInsertId()
-    {
-        return $this->stmt->lastInsertId();
+    public function lastInsertId(){
+        return $this->dbh->lastInsertId();
     }
 
-    public function beginTransaction()
+    public function startTransaction()
     {
-        return $this->stmt->beginTransaction();
+        return $this->dbh->beginTransaction();
     }
 
     public function endTransaction()
     {
-        return $this->stmt->commit();
+        return $this->dbh->commit();
     }
 
     public function cancelTransaction()
     {
-        return $this->stmt->rollBack();
+        return $this->dbh->rollBack();
     }
 
 
