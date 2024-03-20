@@ -15,10 +15,15 @@ class BookCatalogController{
     $this->refcategory = new RefCategory();
   }
 
-  // Book Catalog models
+  // ----- Book Catalog models ----- //
   public function GetBookInformation(){
     $getbookinformation = $this->bookcatalog->GetBookInformation();
     return $getbookinformation;
+  }
+
+  public function GetBookInformationStatus($status){
+    $getbookinfostatus = $this->bookcatalog->GetBookInformationStatus($status);
+    return $getbookinfostatus;
   }
 
   public function GetSpecificBookInformation($id){
@@ -26,13 +31,13 @@ class BookCatalogController{
     return $getspecificbookinfo;
   }
 
-  public function InsertNewBook($title, $isbn, $author, $publisher, $year, $categoryid){
-    $insertnewbook = $this->bookcatalog->InsertNewBook($title, $isbn, $author, $publisher, $year, $categoryid);
+  public function InsertNewBook($title, $isbn, $author, $publisher, $categoryid){
+    $insertnewbook = $this->bookcatalog->InsertNewBook($title, $isbn, $author, $publisher, $categoryid);
     return $insertnewbook;
   }
 
-  public function UpdateBookInformation($id, $title, $isbn, $author, $publisher, $year, $categoryid){
-    $updatebookinformation = $this->bookcatalog->UpdateBookInformation($id, $title, $isbn, $author, $publisher, $year, $categoryid);
+  public function UpdateBookInformation($id, $title, $isbn, $author, $publisher, $categoryid){
+    $updatebookinformation = $this->bookcatalog->UpdateBookInformation($id, $title, $isbn, $author, $publisher, $categoryid);
     return $updatebookinformation;
   }
 
@@ -41,7 +46,15 @@ class BookCatalogController{
     return $deletespecificbook;
   }
 
-  // Ref Category models
+  public function GetToDelete($id){
+    $gettodelete = $this->bookcatalog->GetToDelete($id);
+    return $gettodelete;
+  }
+  // ----- Book Catalog models ----- //
+
+  // ----------------------------------------------------------------------------------------------------------------- //
+
+  // ----- Ref Category models ----- //
   public function SpreadCategory(){
     $spreadcategory = $this->refcategory->SpreadCategory();
     return $spreadcategory;
@@ -51,8 +64,183 @@ class BookCatalogController{
     $getcategory = $this->refcategory->GetCategory($id);
     return $getcategory;
   }
+  // ----- Ref Category models ----- //
 
+}
 
+// Instance of book catalog controller
+$bookcatalogcontroller = new BookCatalogController();
+
+$functionname = $_POST['function_type'];
+
+if($functionname === "spreadCategory"){
+  try{
+    $data_array = array();
+    $spreadcategory = $bookcatalogcontroller->SpreadCategory();
+    $data_array[] = $spreadcategory;
+    echo json_encode($data_array);
+  }
+  catch(PDOException $e){
+    return $e->getMessage();
+  }
+}
+else if($functionname === "selectedCategory"){
+  try{
+    $data_array = array();
+    $selectedcategory = $bookcatalogcontroller->SpreadCategory();
+    $data_array[] = $selectedcategory;
+    var_dump($data_array);
+    echo json_encode($data_array);
+  }
+  catch(PDOException $e){
+    return $e->getMessage();
+  }
+}
+else if($functionname === "refreshTable"){
+  try{
+    $returndata = array();
+    $getbookinfo = $bookcatalogcontroller->GetBookInformation();
+    foreach($getbookinfo as $row){
+      $arraydata = array();
+      $arraydata[] = $row['book_title'];
+      $arraydata[] = $row['book_isbn'];
+      $arraydata[] = $row['author'];
+      $arraydata[] = $row['publisher'];
+      $arraydata[] = $row['year_published'];
+      $arraydata[] = $row['category_name'];
+
+      if($row['status'] != 2){
+        $arraydata[] = '<button type="button" class="btn btn-secondary edit-button" id="edit" value="'.$row['book_id'].'" data-bookid="'.$row['book_id'].'">Edit</button>&nbsp;&nbsp;<button type="button" class="btn btn-danger delete-button" id="delete" value="'.$row['book_id'].'" data-bookid="'.$row['book_id'].'">Delete</button>';
+      }
+      else{
+        $arraydata[] = '<p class="text-decoration-line-through">Deleted</p>';
+      }
+
+      
+      $returndata[] = $arraydata;
+    }
+    echo json_encode($returndata);
+  }
+  catch(PDOException $e){
+    return $e->getMessage();
+  }
+}
+else if($functionname === "currentStatus"){
+  try{
+    if(isset($_POST['status'])){
+      $status = $_POST['status'];
+      
+      if($status == "0"){
+        $getbookinfo = $bookcatalogcontroller->GetBookInformation();
+      }
+      else if($status == "1"){
+        $getbookinfo = $bookcatalogcontroller->GetBookInformationStatus($status);
+      }
+      else if($status == "2"){
+        $getbookinfo = $bookcatalogcontroller->GetBookInformationStatus($status);
+      }
+      $returndata = array();
+      foreach($getbookinfo as $row){
+        $arraydata = array();
+        $arraydata[] = $row['book_title'];
+        $arraydata[] = $row['book_isbn'];
+        $arraydata[] = $row['author'];
+        $arraydata[] = $row['publisher'];
+        $arraydata[] = $row['year_published'];
+        $arraydata[] = $row['category_name'];
+
+        if($row['status'] != 2){
+          $arraydata[] = '<button type="button" class="btn btn-secondary edit-button" id="edit" value="'.$row['book_id'].'" data-bookid="'.$row['book_id'].'">Edit</button>&nbsp;&nbsp;<button type="button" class="btn btn-danger delete-button" id="delete" value="'.$row['book_id'].'" data-bookid="'.$row['book_id'].'">Delete</button>';
+        }
+        else{
+          $arraydata[] = '<p class="text-decoration-line-through">Deleted</p>';
+        }
+
+        $returndata[] = $arraydata;
+      }
+      echo json_encode($returndata);
+    }
+  }
+  catch(PDOException $e){
+    return $e->getMessage();
+  }
+}
+else if($functionname === "insertBook"){
+  try{
+    if(isset($_POST['title']) && isset($_POST['isbn']) && isset($_POST['author']) && isset($_POST['publisher']) && isset($_POST['category'])){
+      $title = $_POST['title'];
+      $isbn = (int)$_POST['isbn'];
+      $author = $_POST['author'];
+      $publisher = $_POST['publisher'];
+      // $year = $_POST['year'];
+      $category = (int)$_POST['category'];
+    
+      $addnewbook = $bookcatalogcontroller->InsertNewBook($title, $isbn, $author, $publisher, $category);
+      echo json_encode($addnewbook);
+    }
+  }
+  catch(PDOException $e){
+    return $e->getMessage();
+  }
+}
+else if($functionname === "selectToDelete"){
+  try{
+    if(isset($_POST['id'])){
+      $id = $_POST['id'];
+      $returnid = 0;
+      $gettodelete = $bookcatalogcontroller->GetToDelete($id);
+      foreach($gettodelete as $row){
+        $returnid = (int)$row['book_id'];
+      }
+      echo json_encode($returnid);
+    }
+  }
+  catch(PDOException $e){
+    return $e->getMessage();
+  }
+}
+else if($functionname === "deleteBook"){
+  try{
+    if(isset($_POST['id'])){
+      $id = $_POST['id'];
+      $deletebook = $bookcatalogcontroller->DeleteSpecificBook($id);
+      echo json_encode($deletebook);
+    }
+  }
+  catch(PDOException $e){
+    return $e->getMessage();
+  }
+}
+else if($functionname === "selectSpecificBook"){
+  try{
+    if(isset($_POST['id'])){
+      $id = $_POST['id'];
+      $getspecificbook = $bookcatalogcontroller->GetSpecificBookInformation($id);
+      echo json_encode($getspecificbook);
+    }
+  }
+  catch(PDOException $e){
+    return $e->getMessage();
+  }
+}
+else if($functionname === "updateBook"){
+  try{
+    if(isset($_POST['id']) && isset($_POST['title']) && isset($_POST['isbn']) && isset($_POST['author']) && isset($_POST['publisher']) && isset($_POST['category'])){
+      $title = $_POST['title'];
+      $isbn = (int)$_POST['isbn'];
+      $author = $_POST['author'];
+      $publisher = $_POST['publisher'];
+      // $year = $_POST['year'];
+      $category = (int)$_POST['category'];
+      $id = (int)$_POST['id'];
+    
+      $updatebook = $bookcatalogcontroller->UpdateBookInformation($id, $title, $isbn, $author, $publisher, $category);
+      echo json_encode($updatebook);
+    }
+  }
+  catch(PDOException $e){
+    return $e->getMessage();
+  }
 }
 
 
