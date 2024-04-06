@@ -72,21 +72,21 @@ class Database{
         return $this->stmt->rowCount();
     }
 
-    public function lastInsertId(){
+    public function lastid(){
         return $this->dbh->lastInsertId();
     }
 
-    public function startTransaction()
+    public function start()
     {
         return $this->dbh->beginTransaction();
     }
 
-    public function endTransaction()
+    public function end()
     {
         return $this->dbh->commit();
     }
 
-    public function cancelTransaction()
+    public function roll()
     {
         return $this->dbh->rollBack();
     }

@@ -51,6 +51,7 @@ $baseUrl = ProjectConfig::$baseurl;
   <script language ="javascript" type="text/javascript">
 
     $(document).ready(function(){
+      inputChange();
       var base_url = "<?php echo $baseUrl ?>";
 
       $('#backadd').click(function(){
@@ -391,7 +392,6 @@ $baseUrl = ProjectConfig::$baseurl;
           },
           dataType: 'json',
           success: (r) => {
-            console.log(r)
             let checkError = true;
             $.each(r, (key, val) => {
               checkError = val
@@ -429,7 +429,6 @@ $baseUrl = ProjectConfig::$baseurl;
           },
           dataType: 'json',
           success: (r) => {
-            console.log(r)
             let errorDelete = true
             $.each(r, (key, val) => {
               errorDelete = key['IsError']
@@ -542,6 +541,43 @@ $baseUrl = ProjectConfig::$baseurl;
         })
       }
 
+      // On change function search
+      function searchBook(name, status){
+        var searchBook = "searchBook";
+        $.ajax({
+          url:base_url + "controllers/BookCatalogController.class.php",
+          type: 'POST',
+          data: {
+            function_type: function(){
+              return searchBook;
+            },
+            name: function(){
+              return name
+            },
+            status: function(){
+              return status
+            }
+          },
+          dataType: 'json',
+          success: (r) => {
+            datatable.clear();
+            datatable.rows.add(r);
+            datatable.draw(false);
+          },
+          error: (xhr, status, error) => {
+            console.log(error)
+          }
+        })
+      } 
+
+      function inputChange(){
+        $('#search-book').change(function(){
+          let bookName = $('#search-book').val()
+          let status = $('#status').val()
+          searchBook(bookName, status)
+        })
+      }
+      
       // Add buttons and call function
       $('#addbook').click(function(){
         var bookTitle = $('#title').val()
@@ -553,7 +589,6 @@ $baseUrl = ProjectConfig::$baseurl;
 
         if(bookTitle == "" || bookISBN == "" || bookAuthor == "" ||
         bookPublisher == "" || bookCategory == "-100"){
-          // console.log("Please fill-up everything.")
           $('#addmodal').modal('hide');
           $('#modalerror').modal('show');
           $('#errormessage').text('Please fill-up everything.');
@@ -561,8 +596,6 @@ $baseUrl = ProjectConfig::$baseurl;
         else{
           insertBook(bookTitle, bookISBN, bookAuthor, bookPublisher, bookCategory)
         }
-        
-
       })
 
       // Update functions such as buttons, modal, etc
@@ -589,6 +622,8 @@ $baseUrl = ProjectConfig::$baseurl;
         currentStatus($('#status').val());
       });
 
+      
+
     })
 
 
@@ -601,6 +636,9 @@ $baseUrl = ProjectConfig::$baseurl;
     <div class="row">
       <div class="col-md">
         <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addmodal">ADD</button>
+      </div>
+      <div class="col-md">
+        <input type="text" class="form-control" id="search-book" placeholder="Search here...">
       </div>
       <div class="col-md">
         <select class="form-select" id="status" aria-label="Default select example">
@@ -645,7 +683,6 @@ $baseUrl = ProjectConfig::$baseurl;
         <div class="modal-content">
           <div class="modal-header">
             <h5 class="modal-title">Add new book</h5>
-            
           </div>
           <div class="modal-body">
             <label for="">Title:</label>

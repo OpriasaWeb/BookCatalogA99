@@ -50,6 +50,11 @@ class BookCatalogController{
     $gettodelete = $this->bookcatalog->GetToDelete($id);
     return $gettodelete;
   }
+
+  public function SearchBook($name, $status){
+    $searchbook = $this->bookcatalog->SearchBook($name, $status);
+    return $searchbook;
+  }
   // ----- Book Catalog models ----- //
 
   // ----------------------------------------------------------------------------------------------------------------- //
@@ -89,7 +94,6 @@ else if($functionname === "selectedCategory"){
     $data_array = array();
     $selectedcategory = $bookcatalogcontroller->SpreadCategory();
     $data_array[] = $selectedcategory;
-    var_dump($data_array);
     echo json_encode($data_array);
   }
   catch(PDOException $e){
@@ -236,6 +240,37 @@ else if($functionname === "updateBook"){
     
       $updatebook = $bookcatalogcontroller->UpdateBookInformation($id, $title, $isbn, $author, $publisher, $category);
       echo json_encode($updatebook);
+    }
+  }
+  catch(PDOException $e){
+    return $e->getMessage();
+  }
+}
+else if($functionname === "searchBook"){
+  try{
+    if(isset($_POST['name']) && isset($_POST['status'])){
+      $name = $_POST['name'];
+      $status = $_POST['status'];
+      $searchbook = $bookcatalogcontroller->SearchBook($name, $status);
+      $returndata = array();
+      foreach($searchbook as $row){
+        $arraydata = array();
+        $arraydata[] = $row['book_title'];
+        $arraydata[] = $row['book_isbn'];
+        $arraydata[] = $row['author'];
+        $arraydata[] = $row['publisher'];
+        $arraydata[] = $row['year_published'];
+        $arraydata[] = $row['category_name'];
+
+        if($row['status'] != 2){
+          $arraydata[] = '<button type="button" class="btn btn-secondary edit-button" id="edit" value="'.$row['book_id'].'" data-bookid="'.$row['book_id'].'">Edit</button>&nbsp;&nbsp;<button type="button" class="btn btn-danger delete-button" id="delete" value="'.$row['book_id'].'" data-bookid="'.$row['book_id'].'">Delete</button>';
+        }
+        else{
+          $arraydata[] = '<p class="text-decoration-line-through">Deleted</p>';
+        }
+        $returndata[] = $arraydata;
+      }
+      echo json_encode($returndata);
     }
   }
   catch(PDOException $e){
