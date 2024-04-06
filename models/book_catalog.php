@@ -44,12 +44,12 @@ class BookCatalog{
                 FROM bookcatalog.book_catalog bc
                 LEFT JOIN bookcatalog.ref_category rc 
                 ON rc.category_id = bc.category_id
-                WHERE bc.book_title LIKE '%$name%'";
+                WHERE bc.book_title LIKE '%$name%' ";
       if($status != 0){
-        $query .= "AND bc.status = $status";
+        $query .= "AND bc.status = $status ";
       }
-      
-      $query .= "ORDER BY book_id DESC";
+
+      $query .= "ORDER BY bc.book_id DESC";
 
       // prepare statement
       $this->db->query($query);

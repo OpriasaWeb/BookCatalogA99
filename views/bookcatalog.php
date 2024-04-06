@@ -628,11 +628,12 @@ $baseUrl = ProjectConfig::$baseurl;
 
 
   </script>
-  <div class="container-fluid">
-    <div class="mt-5"></div>
+  <div class="container-fluid fs-2 text-center m-2">
+    <div class="">Book Catalog</div>
   </div>
   
   <div class="container">
+
     <div class="row">
       <div class="col-md">
         <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addmodal">ADD</button>
