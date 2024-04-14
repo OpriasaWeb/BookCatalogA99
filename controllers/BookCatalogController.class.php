@@ -76,9 +76,9 @@ class BookCatalogController{
 // Instance of book catalog controller
 $bookcatalogcontroller = new BookCatalogController();
 
-$functionname = $_POST['function_type'];
+$funcname = $_POST['function_type'];
 
-if($functionname === "spreadCategory"){
+if($funcname === "spreadCategory"){
   try{
     $data_array = array();
     $spreadcategory = $bookcatalogcontroller->SpreadCategory();
@@ -89,7 +89,7 @@ if($functionname === "spreadCategory"){
     return $e->getMessage();
   }
 }
-else if($functionname === "selectedCategory"){
+else if($funcname === "selectedCategory"){
   try{
     $data_array = array();
     $selectedcategory = $bookcatalogcontroller->SpreadCategory();
@@ -100,7 +100,7 @@ else if($functionname === "selectedCategory"){
     return $e->getMessage();
   }
 }
-else if($functionname === "refreshTable"){
+else if($funcname === "refreshTable"){
   try{
     $returndata = array();
     $getbookinfo = $bookcatalogcontroller->GetBookInformation();
@@ -129,7 +129,7 @@ else if($functionname === "refreshTable"){
     return $e->getMessage();
   }
 }
-else if($functionname === "currentStatus"){
+else if($funcname === "currentStatus"){
   try{
     if(isset($_POST['status'])){
       $status = $_POST['status'];
@@ -169,7 +169,7 @@ else if($functionname === "currentStatus"){
     return $e->getMessage();
   }
 }
-else if($functionname === "insertBook"){
+else if($funcname === "insertBook"){
   try{
     if(isset($_POST['title']) && isset($_POST['isbn']) && isset($_POST['author']) && isset($_POST['publisher']) && isset($_POST['category'])){
       $title = $_POST['title'];
@@ -187,7 +187,7 @@ else if($functionname === "insertBook"){
     return $e->getMessage();
   }
 }
-else if($functionname === "selectToDelete"){
+else if($funcname === "selectToDelete"){
   try{
     if(isset($_POST['id'])){
       $id = $_POST['id'];
@@ -203,7 +203,7 @@ else if($functionname === "selectToDelete"){
     return $e->getMessage();
   }
 }
-else if($functionname === "deleteBook"){
+else if($funcname === "deleteBook"){
   try{
     if(isset($_POST['id'])){
       $id = $_POST['id'];
@@ -215,7 +215,7 @@ else if($functionname === "deleteBook"){
     return $e->getMessage();
   }
 }
-else if($functionname === "selectSpecificBook"){
+else if($funcname === "selectSpecificBook"){
   try{
     if(isset($_POST['id'])){
       $id = $_POST['id'];
@@ -227,7 +227,7 @@ else if($functionname === "selectSpecificBook"){
     return $e->getMessage();
   }
 }
-else if($functionname === "updateBook"){
+else if($funcname === "updateBook"){
   try{
     if(isset($_POST['id']) && isset($_POST['title']) && isset($_POST['isbn']) && isset($_POST['author']) && isset($_POST['publisher']) && isset($_POST['category'])){
       $title = $_POST['title'];
@@ -246,7 +246,7 @@ else if($functionname === "updateBook"){
     return $e->getMessage();
   }
 }
-else if($functionname === "searchBook"){
+else if($funcname === "searchBook"){
   try{
     if(isset($_POST['name']) && isset($_POST['status'])){
       $name = $_POST['name'];
